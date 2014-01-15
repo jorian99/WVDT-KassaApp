@@ -10,11 +10,14 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+
+import nl.bzn.winkelVDToekomst.counter.network.Network;
 
 public class Main extends JFrame implements ActionListener {
 	
@@ -60,9 +63,15 @@ public class Main extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent actionEvent) {
 		if (actionEvent.getSource() == btnGetPrice) {
-			
-			JOptionPane.showMessageDialog(this, "Ingevulde payment code: " + textFieldPaymentCode.getText());
-			
+
+			float price = 0;
+			try {
+				price = Network.getPriceByPaymentId(Integer.parseInt(textFieldPaymentCode.getText()));
+			} catch (NumberFormatException | SQLException e) {
+				e.printStackTrace();
+			}
+		
+			JOptionPane.showMessageDialog(this, "Prijs product: " + price);
 		}
 	}
 }
