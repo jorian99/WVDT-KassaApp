@@ -4,35 +4,74 @@ import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
+import nl.bzn.winkelVDToekomst.counter.config.Config;
 import nl.bzn.winkelVDToekomst.counter.network.Network;
 
-public class Main extends JFrame implements ActionListener {
+/**
+ * Main class
+ * @author Jorian Plat <jorianplat@hotmail.com>
+ * @version 1.0
+ */
+public class Main extends JFrame {
 	
-	private String mainTitle = "KassaApp";
-	private int mainWidth = 200, 
-			    mainHeight = 200;
+	private static final long serialVersionUID = 1L;
 	
 	private JTextField textFieldPaymentCode;
-	private JButton btnGetPrice;
+	private JButton btnGetReceipt;
 
 	public Main() {
 		
-		this.setTitle(mainTitle);
+		setUpFrame();
+		
+		if (!Network.connect()) {
+			JOptionPane.showMessageDialog(this, "Connecting to database failed. Try again later.");
+			btnGetReceipt.setEnabled(false);
+		}
+		
+	}
+
+	/**
+	 * If the payment code is valid and the payment exists, get the receipt and open the payment window
+	 */
+	private void getReceipt() {
+		int paymentId;
+		
+		try {
+			paymentId = Integer.parseInt(textFieldPaymentCode.getText());
+		} catch (NumberFormatException nfe) {
+			JOptionPane.showMessageDialog(this, "Invalid number!");
+			return;
+		}
+		
+		if (Network.paymentExists(paymentId)) {
+			new Payment(paymentId);
+			
+			this.setVisible(false);
+			this.dispose();
+		}else {
+			JOptionPane.showMessageDialog(this, "Payment does not exist!");
+		}
+	}
+	
+	/**
+	 * Set up the frame.
+	 */
+	private void setUpFrame() {
+		this.setTitle(Config.MAIN_TITLE);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(362, 361);
+		this.setResizable(false);
+		this.setSize(Config.MAIN_WIDTH, Config.MAIN_HEIGHT);
 		getContentPane().setLayout(null);
 		
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -44,34 +83,38 @@ public class Main extends JFrame implements ActionListener {
 		textFieldPaymentCode.setHorizontalAlignment(SwingConstants.CENTER);
 		getContentPane().add(textFieldPaymentCode);
 		textFieldPaymentCode.setColumns(2);
+		textFieldPaymentCode.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent keyEvent) {
+			}
+			
+			@Override
+			public void keyReleased(KeyEvent keyEvent) {
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent keyEvent) {
+				if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+					getReceipt();
+				}
+			}
+		});
 		
-		btnGetPrice = new JButton("Get Price");
-		btnGetPrice.setBounds(231, 152, 105, 34);
-		getContentPane().add(btnGetPrice);
-		btnGetPrice.addActionListener(this);
+		btnGetReceipt = new JButton("Get Receipt");
+		btnGetReceipt.setBounds(231, 152, 105, 34);
+		getContentPane().add(btnGetReceipt);
+		btnGetReceipt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getReceipt();
+			}
+		});
 		
 		JLabel lblEnterThePaymentcode = new JLabel("Enter the paymentcode below to calculate the price.");
 		lblEnterThePaymentcode.setBounds(27, 105, 313, 14);
 		getContentPane().add(lblEnterThePaymentcode);
 
-		
-		
 		this.setVisible(true);
-		
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent actionEvent) {
-		if (actionEvent.getSource() == btnGetPrice) {
-
-			float price = 0;
-			try {
-				price = Network.getPriceByPaymentId(Integer.parseInt(textFieldPaymentCode.getText()));
-			} catch (NumberFormatException | SQLException e) {
-				e.printStackTrace();
-			}
-		
-			JOptionPane.showMessageDialog(this, "Prijs product: " + price);
-		}
-	}
+	
 }
