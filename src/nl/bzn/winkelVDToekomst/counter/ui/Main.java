@@ -19,6 +19,9 @@ import javax.swing.SwingConstants;
 import nl.bzn.winkelVDToekomst.counter.config.Config;
 import nl.bzn.winkelVDToekomst.counter.network.ConnectionThread;
 import nl.bzn.winkelVDToekomst.counter.network.Network;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 /**
  * Main class
@@ -50,10 +53,11 @@ public class Main extends JFrame {
 	/**
 	 * Connect to database.
 	 */
-	private void connectToDatabase() {
+	public void connectToDatabase() {
 		loadingLabel.setText("Connecting to database...");
 		loadingLabel.setIcon(iconLoading);
 		btnConnect.setVisible(false);
+		btnGetReceipt.setEnabled(false);
 		
 		Thread tr = new Thread(new ConnectionThread(this));
 		tr.start();
@@ -155,8 +159,28 @@ public class Main extends JFrame {
 			}
 		});
 		panel.add(btnConnect);
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu mnNewMenu = new JMenu("Menu");
+		menuBar.add(mnNewMenu);
+		
+		JMenuItem mntmNewMenuItem = new JMenuItem("Settings");
+		mnNewMenu.add(mntmNewMenuItem);
+		mntmNewMenuItem.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				openSettings();
+			}
+		});
 
 		this.setVisible(true);
+	}
+
+	protected void openSettings() {
+		new Settings(this);
 	}
 
 	/**
@@ -189,6 +213,7 @@ public class Main extends JFrame {
 			loadingLabel.setText("Failed to connect.");
 			loadingLabel.setIcon(iconFailed);
 			btnConnect.setVisible(true);
+			btnGetReceipt.setEnabled(false);
 		}
 	}
 }
