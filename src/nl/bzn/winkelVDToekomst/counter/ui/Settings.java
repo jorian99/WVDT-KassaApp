@@ -30,8 +30,8 @@ public class Settings extends JFrame {
 	
 	public Settings(Main main) {
 		this.main = main;
-		this.setTitle(Config.MAIN_TITLE);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setTitle("Settings");
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setResizable(false);
 		this.setSize(310, 197);
 		getContentPane().setLayout(null);
