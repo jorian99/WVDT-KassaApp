@@ -16,15 +16,19 @@ import javax.swing.JPanel;
 
 import nl.bzn.winkelVDToekomst.counter.config.Config;
 
+/**
+ * Settings frame class
+ * @author Jorian Plat <jorianplat@hotmail.com>
+ * @version 1.0
+ */
 public class Settings extends JFrame {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
+	
+	private JTextField textFieldIP;
+	private JTextField textFieldName;
+	private JTextField textFieldUserName;
+	private JTextField textFieldPassword;
 	
 	private Main main;
 	
@@ -60,29 +64,29 @@ public class Settings extends JFrame {
 		lblDatabasePassword.setBounds(10, 99, 130, 14);
 		getContentPane().add(lblDatabasePassword);
 		
-		textField = new JTextField();
-		textField.setBounds(150, 8, 139, 20);
-		textField.setText(Config.DATABASE_IP_ADDRESS);
-		getContentPane().add(textField);
-		textField.setColumns(10);
+		textFieldIP = new JTextField();
+		textFieldIP.setBounds(150, 8, 139, 20);
+		textFieldIP.setText(Config.DATABASE_IP_ADDRESS);
+		getContentPane().add(textFieldIP);
+		textFieldIP.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setText(Config.DATABASE_NAME);
-		textField_1.setColumns(10);
-		textField_1.setBounds(150, 46, 139, 20);
-		getContentPane().add(textField_1);
+		textFieldName = new JTextField();
+		textFieldName.setText(Config.DATABASE_NAME);
+		textFieldName.setColumns(10);
+		textFieldName.setBounds(150, 46, 139, 20);
+		getContentPane().add(textFieldName);
 		
-		textField_2 = new JTextField();
-		textField_2.setText(Config.DATABASE_USERNAME);
-		textField_2.setColumns(10);
-		textField_2.setBounds(150, 71, 139, 20);
-		getContentPane().add(textField_2);
+		textFieldUserName = new JTextField();
+		textFieldUserName.setText(Config.DATABASE_USERNAME);
+		textFieldUserName.setColumns(10);
+		textFieldUserName.setBounds(150, 71, 139, 20);
+		getContentPane().add(textFieldUserName);
 		
-		textField_3 = new JPasswordField();
-		textField_3.setText(Config.DATABASE_PASSWORD);
-		textField_3.setColumns(10);
-		textField_3.setBounds(150, 96, 139, 20);
-		getContentPane().add(textField_3);
+		textFieldPassword = new JPasswordField();
+		textFieldPassword.setText(Config.DATABASE_PASSWORD);
+		textFieldPassword.setColumns(10);
+		textFieldPassword.setBounds(150, 96, 139, 20);
+		getContentPane().add(textFieldPassword);
 		
 		JSeparator separator_1 = new JSeparator();
 		separator_1.setBounds(10, 124, 279, 2);
@@ -106,11 +110,16 @@ public class Settings extends JFrame {
 		
 		this.setVisible(true);
 	}
+	
+	
+	/**
+	 * Save the settings to the config class, and close this frame. After closing try to make a connection.
+	 */
 	protected void saveSettings() {
-		Config.DATABASE_IP_ADDRESS = textField.getText();
-		Config.DATABASE_NAME = textField_1.getText();
-		Config.DATABASE_USERNAME = textField_2.getText();
-		Config.DATABASE_PASSWORD = textField_3.getText();
+		Config.DATABASE_IP_ADDRESS = textFieldIP.getText();
+		Config.DATABASE_NAME = textFieldName.getText();
+		Config.DATABASE_USERNAME = textFieldUserName.getText();
+		Config.DATABASE_PASSWORD = textFieldPassword.getText();
 		
 		main.connectToDatabase();
 		this.setVisible(false);
